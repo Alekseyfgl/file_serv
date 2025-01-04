@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func S3Routes(r *gin.Engine, s3Handlers *handlers.S3Handlers) {
+func S3Routes(r *gin.RouterGroup, s3Handlers *handlers.S3Handlers) {
 	r.POST("/upload/:id",
 		middlewares.LimitRequestSizeMiddleware(50<<20),
 		middlewares.CheckExtensionsMiddleware([]string{".png", ".jpg", ".jpeg", ".gif"}),
