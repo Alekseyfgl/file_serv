@@ -3,30 +3,14 @@ package services
 import (
 	"context"
 	"fmt"
+	"github.com/google/uuid"
 	"io"
 	"mime"
 	"mime/multipart"
 	"path"
-	"strings"
-
-	"github.com/google/uuid"
 
 	"files/internal/repository"
 )
-
-// Пример белого списка (можно расширять)
-var allowedExts = []string{".png", ".jpg", ".jpeg", ".gif"}
-
-// isAllowedExt — проверяет, входит ли расширение в «белый список».
-func isAllowedExt(ext string) bool {
-	ext = strings.ToLower(ext)
-	for _, e := range allowedExts {
-		if e == ext {
-			return true
-		}
-	}
-	return false
-}
 
 // S3Service — слой бизнес-логики для работы с файлами.
 type S3Service struct {
@@ -69,9 +53,6 @@ func (s *S3Service) UploadMultiple(
 
 		// Проверяем расширение
 		ext := path.Ext(fileName)
-		if !isAllowedExt(ext) {
-			return nil, fmt.Errorf("расширение %q не поддерживается", ext)
-		}
 
 		// Генерируем UUID для имени файла
 		fileUUID := uuid.New().String()
