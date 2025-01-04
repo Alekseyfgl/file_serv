@@ -1,0 +1,62 @@
+# Binaries and build artifacts
+*.exe
+*.dll
+*.so
+*.dylib
+*.o
+*.out
+*.a
+*.log
+*.swp
+*.swo
+
+# Go-specific
+/bin/
+/vendor/
+*.test
+*.cover
+*.cov
+coverage.out
+
+# Configuration files
+*.env
+.env.*
+config.json
+*.bak
+*.tmp
+
+# IDE-specific
+.idea/
+*.iml
+.vscode/
+.vscode-test/
+*.code-workspace
+
+# macOS-specific
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows-specific
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# Linux-specific
+*~
+
+# Docker-specific
+.dockerignore
+docker-compose.override.yml
+
+# Kubernetes-specific
+.kube/
+
+# Git-specific
+.git/
+*.orig
+
+# Coverage reports
+*.lcov
+coverage/
+.coverage
