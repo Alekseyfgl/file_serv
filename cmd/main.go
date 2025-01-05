@@ -26,10 +26,12 @@ func main() {
 	r.Use(gin.Recovery())
 	r.Use(middlewares.RequestLoggerMiddleware(container.Logger))
 
+	//set auth for group
+	//apiGroup.Use(auth.JwtAuthMiddleware(container.JwtService))
+
 	routes.S3Routes(apiGroup, container.S3Handler)
 
 	port := env.GetEnv("SERV_PORT", "8080")
-
 	log.Info("Starting server", zap.String("port", port))
 	if err := r.Run(":" + port); err != nil {
 		log.Fatal("Failed to start server", zap.Error(err))
