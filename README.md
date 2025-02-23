@@ -19,7 +19,6 @@ docker run \
   -e BUCKET_NAME="" \
   -e S3_ACCESS_KEY="" \
   -e S3_SECRET_ACCESS_KEY="" \
-  -e JWT_KEY="" \
   --name file-serv-cnt \
   file-serv:1.0.0
 ```
