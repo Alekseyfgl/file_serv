@@ -45,16 +45,14 @@ func (h *S3Handlers) UploadMultipleHandler(c *gin.Context) {
 
 	urls, err := h.S3Service.UploadMultiple(context.Background(), idParam, multipartReader)
 	if err != nil {
-		// Предположим, это клиентская ошибка
 		http_error.NewHTTPError(
 			http.StatusBadRequest,
 			err.Error(),
-			nil, // можно сформировать детали, если нужно
+			nil,
 		).Send(c)
 		return
 	}
 
-	// Успешный ответ
 	c.JSON(http.StatusOK, gin.H{"urls": urls})
 }
 
@@ -124,5 +122,64 @@ func (h *S3Handlers) DeleteOneByUUIDHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Удалён файл(ы) по UUID",
 		"keys":    keys,
+	})
+}
+
+// ListAllFilesHandler — GET /files
+// Возвращает список URL всех файлов из S3 бакета.
+func (h *S3Handlers) ListAllFilesHandler(c *gin.Context) {
+	files, err := h.S3Service.ListAllFiles(context.Background())
+	if err != nil {
+		http_error.NewHTTPError(
+			http.StatusInternalServerError,
+			err.Error(),
+			nil,
+		).Send(c)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"files": files})
+}
+
+// FolderExistsHandler — GET /folder_exists?folder=<folderName>
+// Возвращает информацию о папке: существует ли она и список файлов по заданному пути.
+// Если файлов нет, возвращается ошибка 404.
+func (h *S3Handlers) FolderExistsHandler(c *gin.Context) {
+	folderName := c.Query("folder")
+	if folderName == "" {
+		http_error.NewHTTPError(
+			http.StatusBadRequest,
+			"Не указан параметр folder",
+			[]http_error.ErrorItem{
+				{Field: "folder", Error: "missing"},
+			},
+		).Send(c)
+		return
+	}
+
+	exists, files, err := h.S3Service.GetFolderInfo(context.Background(), folderName)
+	if err != nil {
+		http_error.NewHTTPError(
+			http.StatusInternalServerError,
+			err.Error(),
+			nil,
+		).Send(c)
+		return
+	}
+
+	if !exists {
+		http_error.NewHTTPError(
+			http.StatusNotFound,
+			"Папка не найдена",
+			[]http_error.ErrorItem{
+				{Field: "folder", Error: "not found"},
+			},
+		).Send(c)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"folder": folderName,
+		"exists": exists,
+		"files":  files,
 	})
 }

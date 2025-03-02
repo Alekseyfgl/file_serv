@@ -115,3 +115,21 @@ func (r *S3Repository) FolderExists(ctx context.Context, folderName string) (boo
 	// Если в ответе нет ни одного объекта, считаем что “папки” нет.
 	return len(resp.Contents) > 0, nil
 }
+
+// ListAllFiles возвращает все объекты из S3 бакета, проходя по всем страницам.
+func (r *S3Repository) ListAllFiles(ctx context.Context) ([]types.Object, error) {
+	var objects []types.Object
+	paginator := s3.NewListObjectsV2Paginator(r.Client, &s3.ListObjectsV2Input{
+		Bucket: aws.String(r.BucketName),
+	})
+
+	for paginator.HasMorePages() {
+		page, err := paginator.NextPage(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("ошибка при получении страницы: %w", err)
+		}
+		objects = append(objects, page.Contents...)
+	}
+	fmt.Println(objects)
+	return objects, nil
+}
