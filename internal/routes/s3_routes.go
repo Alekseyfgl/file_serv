@@ -9,7 +9,7 @@ import (
 func S3Routes(r *gin.RouterGroup, s3Handlers *handlers.S3Handlers) {
 	r.POST("/upload/:id",
 		middlewares.LimitRequestSizeMiddleware(50<<20),
-		middlewares.CheckExtensionsMiddleware([]string{".png", ".jpg", ".jpeg", ".gif"}),
+		middlewares.CheckExtensionsMiddleware([]string{".png", ".jpg", ".jpeg", ".gif", ".webp"}),
 		s3Handlers.UploadMultipleHandler,
 	)
 
